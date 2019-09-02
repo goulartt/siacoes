@@ -10,8 +10,14 @@ import java.util.List;
 
 import br.edu.utfpr.dv.siacoes.log.UpdateEvent;
 import br.edu.utfpr.dv.siacoes.model.Activity;
+import br.edu.utfpr.dv.siacoes.dao.IDAO;
 
-public class ActivityDAO {
+public class ActivityDAO implements IDAO {
+
+	@Override
+   	public void getType() {
+      System.out.println("Im a Activity DAO");
+   }
 	
 	public boolean needsFillAmount(int idActivity) throws SQLException{
 		Connection conn = null;

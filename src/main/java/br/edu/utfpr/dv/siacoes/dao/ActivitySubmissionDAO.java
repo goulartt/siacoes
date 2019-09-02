@@ -17,8 +17,14 @@ import br.edu.utfpr.dv.siacoes.model.ActivityValidationReport;
 import br.edu.utfpr.dv.siacoes.model.FinalDocument.DocumentFeedback;
 import br.edu.utfpr.dv.siacoes.model.StudentActivityStatusReport;
 import br.edu.utfpr.dv.siacoes.model.User;
+import br.edu.utfpr.dv.siacoes.dao.IDAO;
 
-public class ActivitySubmissionDAO {
+public class ActivitySubmissionDAO implements IDAO {
+
+	@Override
+   	public void getType() {
+      System.out.println("Im a Activity Submission DAO");
+   }
 	
 	public ActivityFeedback getFeedback(int idActivitySubmission) throws SQLException{
 		if(idActivitySubmission == 0){
