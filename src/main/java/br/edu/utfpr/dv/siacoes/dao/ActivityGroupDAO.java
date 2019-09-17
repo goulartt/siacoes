@@ -10,8 +10,14 @@ import java.util.List;
 
 import br.edu.utfpr.dv.siacoes.log.UpdateEvent;
 import br.edu.utfpr.dv.siacoes.model.ActivityGroup;
+import br.edu.utfpr.dv.siacoes.dao.IDAO;
 
-public class ActivityGroupDAO {
+public class ActivityGroupDAO implements IDAO {
+
+	@Override
+   	public void getType() {
+      System.out.println("Im a Activity Group DAO");
+   }
 	
 	public List<ActivityGroup> listAll() throws SQLException{
 		Connection conn = null;
