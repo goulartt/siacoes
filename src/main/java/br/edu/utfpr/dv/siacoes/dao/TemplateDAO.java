@@ -1,6 +1,7 @@
 package br.edu.utfpr.dv.siacoes.dao;
 
 import br.edu.utfpr.dv.siacoes.log.UpdateEvent;
+import br.edu.utfpr.dv.siacoes.model.SigetConfig;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -85,7 +86,7 @@ public abstract class TemplateDAO<T> {
     }
 
 
-    public final void delete(int idUser, T obj) throws SQLException {
+    public final void delete(int idUser, int idObj) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
 
@@ -94,10 +95,10 @@ public abstract class TemplateDAO<T> {
 
             stmt = conn.prepareStatement(getDeleteSQL());
 
-            setStatementJustId(stmt, obj);
+            stmt.setInt(1, idObj);
 
             stmt.execute();
-            new UpdateEvent(conn).registerUpdate(idUser, obj);
+            new UpdateEvent(conn).registerUpdate(idUser, idObj);
 
         } finally {
             if ((stmt != null) && !stmt.isClosed())
@@ -107,7 +108,45 @@ public abstract class TemplateDAO<T> {
         }
     }
 
-    protected abstract void setStatementJustId(PreparedStatement stmt, T obj);
+    public final T findById(int idObj) throws SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try{
+            conn = ConnectionDAO.getInstance().getConnection();
+            stmt = conn.prepareStatement(getSelectByIdSQL());
+
+            stmt.setInt(1, idObj);
+
+            rs = stmt.executeQuery();
+
+            if(rs.next()){
+                return this.loadObject(rs);
+            }else{
+                return null;
+            }
+        }finally{
+            if((rs != null) && !rs.isClosed())
+                rs.close();
+            if((stmt != null) && !stmt.isClosed())
+                stmt.close();
+            if((conn != null) && !conn.isClosed())
+                conn.close();
+        }
+    }
+
+    public final void save(int idUser, T config, int idObj) throws SQLException{
+        boolean insert = (this.findById(idObj) == null);
+
+        if (insert) {
+            create(idUser, config);
+        } else {
+            update(idUser, config);
+        }
+    }
+
+    protected abstract String getSelectByIdSQL();
 
     protected abstract String getInsertSQL();
 

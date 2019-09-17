@@ -12,44 +12,13 @@ import br.edu.utfpr.dv.siacoes.model.SigetConfig.SupervisorFilter;
 public class SigesConfigDAO extends TemplateDAO<SigesConfig> {
 
     public SigesConfig findByDepartment(int idDepartment) throws SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        try {
-            conn = ConnectionDAO.getInstance().getConnection();
-            stmt = conn.prepareStatement("SELECT * FROM sigesconfig WHERE idDepartment = ?");
-
-            stmt.setInt(1, idDepartment);
-
-            rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return this.loadObject(rs);
-            } else {
-                return null;
-            }
-        } finally {
-            if ((rs != null) && !rs.isClosed())
-                rs.close();
-            if ((stmt != null) && !stmt.isClosed())
-                stmt.close();
-            if ((conn != null) && !conn.isClosed())
-                conn.close();
-        }
+        return findById(idDepartment);
     }
 
     public int save(int idUser, SigesConfig config) throws SQLException {
-        boolean insert = (this.findByDepartment(config.getDepartment().getIdDepartment()) == null);
-
-        if (insert) {
-            create(idUser, config);
-        } else {
-            update(idUser, config);
-        }
+        save(idUser, config, config.getDepartment().getIdDepartment());
 
         return config.getDepartment().getIdDepartment();
-
     }
 
     @Override
@@ -79,7 +48,12 @@ public class SigesConfigDAO extends TemplateDAO<SigesConfig> {
 		return "DELETE FROM sigesconfig WHERE idDepartment = ?";
 	}
 
-	@Override
+    @Override
+    protected String getSelectByIdSQL() {
+        return "SELECT * FROM sigesconfig WHERE idDepartment = ?";
+    }
+
+    @Override
     protected String getInsertSQL() {
         return "INSERT INTO sigesconfig(minimumScore, supervisorPonderosity, companySupervisorPonderosity, showgradestostudent, supervisorfilter, supervisorFillJuryForm, maxfilesize, jurytime, idDepartment) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
     }
